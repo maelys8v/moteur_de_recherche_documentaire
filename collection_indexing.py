@@ -1,5 +1,5 @@
 import spacy.cli
-# spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
+#spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
 nlp = spacy.load("en_core_web_sm")
 
 # ----------------------------------------------------
