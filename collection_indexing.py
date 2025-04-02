@@ -2,6 +2,8 @@ import spacy.cli
 
 # ----------------------------------------------------
 import nltk
+nltk.download('punkt')
+nltk.download('punkt_tab')
 texte = "ceci est une phrase. Je veux tester. Héhé"
 phrases = nltk.sent_tokenize(texte)
 print(phrases)
