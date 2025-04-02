@@ -2,17 +2,24 @@
 
 ## ToDo
 ### A faire
-- externaliser la liste
+- externaliser la liste dans un fichier qu'on open
 - 
 
 ### Améliorations
 - TF IDF
-- faire une stopword liste personnalisée aux textes qu'on a 
+- faire une stopword liste personnalisée aux textes qu'on a
+- première version : on prend les 10 mots les moins fréquents
 
+## Git
+* accepter une modif : git fetch + git merge
+* proposer une modif : git add . + git commit -m "message" + git push
 
 ## prises de notes de chacunes
 ### Lou
 ### Léna
+- TF IDF ou booléen ?
+- lemming mieux que stemming
+- on met que des lemmes dans stopword: lemme sur txt et lemme sur stopword et on applique stopword
 ### Jeanne
 ### Maëlys
 #### pour la step 1 part1 :

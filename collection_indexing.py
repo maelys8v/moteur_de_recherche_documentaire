@@ -19,7 +19,7 @@ for line in documents:
     if re.findall(r"^\.I \d+", line):
         nb_doc += 1
 
-print(nb_doc)
+print(nb_doc) # 1460
 
 
 # Supprimer les tokens qui sont des stopwords
