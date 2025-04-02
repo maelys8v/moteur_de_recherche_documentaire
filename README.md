@@ -29,4 +29,7 @@
 1. séparer les textes avec I.
 2. segmenter chaque txt et stoquer les fréquences des mots dans un dico
    3. utiliser nltk pour avoir les mots
+      4. Faire la stop words
+      5. faire le stemming avec nltk
+      4. faire une liste de dicos avec un dico par texte
 4. fin
