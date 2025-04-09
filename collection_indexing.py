@@ -1,6 +1,5 @@
 import spacy.cli
-
-# spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
+#spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
 nlp = spacy.load("en_core_web_sm")
 
 # ----------------------------------------------------
@@ -21,9 +20,8 @@ pattern = r".I \d+"
 textes = re.split(pattern, documents) # liste des documents itérable de 1 à 1460
 print(textes[1460])
 
-# Supprimer les tokens qui sont des stopwords
-# Liste de stopwords de NLTK en anglais
-stopWords = set(stopwords.words('english'))
+# Step 1.1) : Supprimer les tokens qui sont des stopwords
+stopWords = set(stopwords.words('english')) # Liste de stopwords de NLTK en anglais
 # Une liste de stopwords trouvés sur internet
 stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
                    "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
@@ -37,9 +35,13 @@ stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", 
                    "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
                    "now"]
 
+tokenized_words={}
+wordsFiltered = {w:tokenized_words[w] for w in tokenized_words if w not in stopWords} # Dict des mots filtrés
 tokenized_words = []
 wordsFiltered = [w for w in tokenized_words if w not in stopWords]  # Liste des mots filtrés
 
+# Step 1.2) : choisir indexing terms
+wordsNotFreq= {w:wordsFiltered[w] for w in wordsFiltered if wordsFiltered[w]<5 } # Dict avec mots de freq < 5
 # on part du principe que le textes sont dans une liste de strings
 # appelée document_list
 def creeDicoFreq(listeTexte):
