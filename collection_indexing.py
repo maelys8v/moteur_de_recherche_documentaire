@@ -45,8 +45,7 @@ wordsNotFreq= {w:wordsFiltered[w] for w in wordsFiltered if wordsFiltered[w]<5 }
 # on part du principe que le textes sont dans une liste de strings
 # appelée document_list
 def creeDicoFreq(listeTexte):
-    dico_freq_lemmes = {}
-    dico_liste = [] # liste pour stocker les dico pou $r chaque textes
+    dico_liste = []  # liste pour stocker les dico pou $r chaque textes
     idoc = 0
     for doc in listeTexte:
         dico_liste.append({})
@@ -55,18 +54,13 @@ def creeDicoFreq(listeTexte):
         for w in docu:
             lemmes.append(w.lemma_)
         for le in lemmes:
-            # pour le gros dico
-            if le in dico_freq_lemmes.keys():
-                dico_freq_lemmes[le] += 1
-            else:
-                dico_freq_lemmes[le] = 1
             # pour les dicos individuels
             if le in dico_liste[idoc].keys():
                 dico_liste[idoc][le] += 1
             else:
                 dico_liste[idoc][le] = 1
-        idoc +=1
-    return dico_freq_lemmes, dico_liste
+        idoc += 1
+    return dico_liste
 
 # test creeDicoFreq
 document_list = [
@@ -75,8 +69,6 @@ document_list = [
 test2 = ["There are horses next to this horse. It is sunny.", "Document 2 is here."]
 
 print("tadaaaaaaaaaaaaa")
-grosDico, listeDico = creeDicoFreq(test2)
-print(grosDico)
+print(creeDicoFreq(test2))
 print("-------------------------------------------")
-print(listeDico)
 # fin test
