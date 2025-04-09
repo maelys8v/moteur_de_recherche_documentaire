@@ -6,9 +6,9 @@
 - 
 
 ### Améliorations
-- TF IDF
 - faire une stopword liste personnalisée aux textes qu'on a
 - première version : on prend les 10 mots les moins fréquents
+- faire en sorte que ça ne soit pas sensible à la casse (majuscule ou minuscule peu importe)
 
 ## Git
 * accepter une modif : git fetch + git merge
@@ -17,9 +17,8 @@
 ## prises de notes de chacunes
 ### Lou
 ### Léna
-- TF IDF ou booléen ?
-- lemming mieux que stemming
-- on met que des lemmes dans stopword: lemme sur txt et lemme sur stopword et on applique stopword
+- TODO
+  - tester weighting suit aux tests de tfidf
 ### Jeanne
 ### Maëlys
 #### pour la step 1 part1 :
