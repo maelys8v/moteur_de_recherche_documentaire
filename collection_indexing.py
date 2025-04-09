@@ -1,4 +1,5 @@
 import spacy.cli
+import math
 #spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
 nlp = spacy.load("en_core_web_sm")
 
@@ -14,6 +15,14 @@ nltk.download('punkt_tab')
 nltk.download('stopwords')
 
 with open("CISI/DATA/CISI.ALLnettoye") as f:
+    documents = f.readlines()
+texte = "ceci est une phrase. Je veux tester. Héhé"
+phrases = nltk.sent_tokenize(texte)
+print(phrases)
+# ------------------------------------------------------
+nlp = spacy.load ( "en_core_web_md" )
+
+nb_doc = 0
     documents = f.read()
 
 pattern = r".I \d+"
@@ -57,6 +66,12 @@ def creeDicoFreq(listeTexte):
     dico_liste = [{w:d[w] for w in d if w not in stopsWords_list} for d in dico_liste] # enlève les stopwords dans chaque dico
     dico_liste = [{w:d[w] for w in d if d[w]<5 } for d in dico_liste] # enlève chaque token de freq>5 dans chaque dico
     return dico_liste
+with open("CISI/DATA/CISI.ALLnettoye") as f:
+    documents = f.read()
+
+pattern = r".I \d+"
+textes = re.split(pattern, documents) # liste des documents itérable de 1 à 1460
+print(textes[1460])
 
 # test creeDicoFreq
 document_list = [
@@ -68,3 +83,27 @@ print("tadaaaaaaaaaaaaa")
 print(creeDicoFreq(test2))
 print("-------------------------------------------")
 # fin test
+
+
+#creeDicoFreq : liste des docs dans lesquels apparaît le lemme, liste de tous les dicos des documents
+
+#nombre de lemmes total dans doc (genre 4 si on a 2 fois be et 2 fois love)
+def nbLemmesDansDoc(doc):
+    res = 0
+    dicoDuDoc = listeDeTousLesDicos[doc] #donne le dico du document
+    for w in dicoDuDoc :
+        res+= dicoDuDoc[w] #dicoDuDoc de w contient le nb de fois où le mot apparaît
+        #donc la somme à la fin du for nous donne le nombre de lemmes total dans le document
+    return res
+
+#nb de documents contenant w
+def nbDocContenantW(w):
+    res = 0
+    for dico in listeDeTousLesDicos :
+        if dico.contains(w):
+            res += 1
+    return res
+
+def tfidf(word, doc):
+    dicoDuDoc = listeDeTousLesDicos[doc]
+    return (dicoDuDoc[word]/nbLemmesDansDoc(doc)) * (math.log(nb_doc/nbDocContenantW(word)))
