@@ -20,7 +20,7 @@ pattern = r".I \d+"
 textes = re.split(pattern, documents) # liste des documents itérable de 1 à 1460
 print(textes[1460])
 
-# Step 1.1) : Supprimer les tokens qui sont des stopwords
+# Step 1.1) :
 stopWords = set(stopwords.words('english')) # Liste de stopwords de NLTK en anglais
 # Une liste de stopwords trouvés sur internet
 stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
@@ -35,17 +35,11 @@ stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", 
                    "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
                    "now"]
 
-tokenized_words={}
-wordsFiltered = {w:tokenized_words[w] for w in tokenized_words if w not in stopWords} # Dict des mots filtrés
-tokenized_words = []
-wordsFiltered = [w for w in tokenized_words if w not in stopWords]  # Liste des mots filtrés
 
-# Step 1.2) : choisir indexing terms
-wordsNotFreq= {w:wordsFiltered[w] for w in wordsFiltered if wordsFiltered[w]<5 } # Dict avec mots de freq < 5
 # on part du principe que le textes sont dans une liste de strings
 # appelée document_list
 def creeDicoFreq(listeTexte):
-    dico_liste = []  # liste pour stocker les dico pou $r chaque textes
+    dico_liste = []  # liste pour stocker les dico pour chaque textes
     idoc = 0
     for doc in listeTexte:
         dico_liste.append({})
@@ -60,6 +54,8 @@ def creeDicoFreq(listeTexte):
             else:
                 dico_liste[idoc][le] = 1
         idoc += 1
+    dico_liste = [{w:d[w] for w in d if w not in stopsWords_list} for d in dico_liste] # enlève les stopwords dans chaque dico
+    dico_liste = [{w:d[w] for w in d if d[w]<5 } for d in dico_liste] # enlève chaque token de freq>5 dans chaque dico
     return dico_liste
 
 # test creeDicoFreq
