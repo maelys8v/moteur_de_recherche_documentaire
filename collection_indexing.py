@@ -1,5 +1,6 @@
 import spacy.cli
-#spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
+
+# spacy.cli.download("en_core_web_sm") # Load English tokenizer because the texts
 nlp = spacy.load("en_core_web_sm")
 
 # ----------------------------------------------------
@@ -17,11 +18,11 @@ with open("CISI/DATA/CISI.ALLnettoye") as f:
     documents = f.read()
 
 pattern = r".I \d+"
-textes = re.split(pattern, documents) # liste des documents itérable de 1 à 1460
+textes = re.split(pattern, documents)  # liste des documents itérable de 1 à 1460
 print(textes[1460])
 
 # Step 1.1) :
-stopWords = set(stopwords.words('english')) # Liste de stopwords de NLTK en anglais
+stopWords = set(stopwords.words('english'))  # Liste de stopwords de NLTK en anglais
 # Une liste de stopwords trouvés sur internet
 stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
                    "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
@@ -54,9 +55,12 @@ def creeDicoFreq(listeTexte):
             else:
                 dico_liste[idoc][le] = 1
         idoc += 1
-    dico_liste = [{w:d[w] for w in d if w not in stopsWords_list} for d in dico_liste] # enlève les stopwords dans chaque dico
-    dico_liste = [{w:d[w] for w in d if d[w]<5 } for d in dico_liste] # enlève chaque token de freq>5 dans chaque dico
+    dico_liste = [{w: d[w] for w in d if w not in stopsWords_list} for d in
+                  dico_liste]  # enlève les stopwords dans chaque dico
+    dico_liste = [{w: d[w] for w in d if d[w] < 5} for d in
+                  dico_liste]  # enlève chaque token de freq>5 dans chaque dico
     return dico_liste
+
 
 # test creeDicoFreq
 document_list = [
@@ -67,4 +71,28 @@ test2 = ["There are horses next to this horse. It is sunny.", "Document 2 is her
 print("tadaaaaaaaaaaaaa")
 print(creeDicoFreq(test2))
 print("-------------------------------------------")
-# fin test
+# fin test creeDicoFreq
+
+
+# Question 5 de la partie 1
+def invertedFiles(vec_doc_liste):
+    dico = {}
+    idoc = 0
+    for l_doc in vec_doc_liste:
+        for doublet in l_doc:
+            print(doublet)
+            print(doublet[0])
+            if doublet[0] in dico.keys():
+                dico[doublet[0]].append((idoc, doublet[1]))
+            else:
+                dico[doublet[0]] = [(idoc, doublet[1])]
+        idoc += 1
+    return dico
+
+
+# test invertedFiles
+vec_doc_liste_test = [[("chat", 1), ("Tomate", 0.5)], [("house", 0.9), ("car", 0.8), ("chat", 0.234)]]
+print("inverted-------------------------")
+print(invertedFiles(vec_doc_liste_test))
+print("---------------------------------")
+# fin test invertedFiles
