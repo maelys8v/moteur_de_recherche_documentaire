@@ -1,11 +1,9 @@
 # taleo
 
-## ToDo
-### A faire
-- externaliser la liste dans un fichier qu'on open
-- 
+## Remarques
+/!\ Un fichier CISI_test.ALLnettoye a été crée avec juste 10 documents pour tester plus rapidement sur moins de données pendant la phase de développement.
 
-### Améliorations
+## Améliorations
 - faire une stopword liste personnalisée aux textes qu'on a
 - première version : on prend les 10 mots les moins fréquents
 - faire en sorte que ça ne soit pas sensible à la casse (majuscule ou minuscule peu importe)
