@@ -1,11 +1,16 @@
 import spacy.cli
 import math
+
+from nltk import word_tokenize
+
 #spacy.cli.download("en_core_web_md") # Load English tokenizer in middle size because the texts are in english
 nlp = spacy.load("en_core_web_md")
 
 import nltk
 import re
 from nltk.corpus import stopwords  # liste de stopwords de NLTK
+#nltk.download('wordnet')
+from nltk.stem import WordNetLemmatizer
 
 nlp = spacy.load("en_core_web_md")
 #nltk.download('punkt')
@@ -89,10 +94,13 @@ def nbLemmesDansDoc(doc):
     return res
 
 #nb de documents contenant w
+#modifs : lemmatisation de w avant de le chercher dans les dicos
 def nbDocContenantW(w):
     res = 0
+    w = nlp(w)
+    lemme = w[0].lemma_
     for dico in liste_de_tous_les_dicos :
-        if w in dico:
+        if lemme in dico:
             res += 1
     return res
 
@@ -163,8 +171,8 @@ print("---------------------------------")
 # fin test invertedFiles
 
 
-
 def main():
+
     # Step 1.1 and 1.2) : Tokenisation and choice of indexing terms
     textes = open_split()
     global liste_de_tous_les_dicos
@@ -176,7 +184,7 @@ def main():
 
     # Step 1.3) : TF IDF
     test = nbDocContenantW("Editions")
-    ''' Remarque de Léna
+    '''Remarque de Léna
     Je ne suis pas sûre que la lemmatisation soit bien passée car par exemple pour le premier doc
     j'ai les mots "Editions" qui apparait une fois et "edition" qui apparait une fois aussi
     alors que la lemmatisation aurait dû faire en sorte que "edition" apparaisse deux fois.
