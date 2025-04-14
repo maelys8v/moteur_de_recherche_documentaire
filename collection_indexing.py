@@ -127,7 +127,14 @@ def weighting(ListeDeTousLesDicos):
 
 
 # Step 1.4) : Vectors
-
+# Liste de listes de Tuple(Terme, Poids) (pour chaque dico on a une liste des tokens avec leur poids associé)
+def vector_representation(dico):
+    representation_vector = []
+    for dic_token in dico:
+        sublist = []
+        for token in dico[dic_token]:
+            sublist.append((token, dico[dic_token][token]))
+        representation_vector.append(sublist)
 
 # Step 1.5) : inverted files
 
