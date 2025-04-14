@@ -22,8 +22,8 @@ test2 = ["There are horses next to this horse. It is sunny.", "Document 2 is her
 def open_split():
     with open("CISI/DATA/CISI_test.ALLnettoye") as f:
         documents = f.read()
-    documents = re.sub(r'\r\n|\r|\n', ' ', documents) #soit on met cette ligne soit on laisse \n dans la stop words liste
-    documents = re.sub(r'\s+', ' ', documents)
+    documents = re.sub(r'\r\n|\r|\n', ' ', documents) #pour remplacer les retours à la ligne / retours chariot par un espace
+    documents = re.sub(r'\s+', ' ', documents) #pour enlever les espaces consécutifs
     pattern = r"\.I \d+"
     textes = re.split(pattern, documents) # liste des documents itérable de 1 à 1460
     return textes
