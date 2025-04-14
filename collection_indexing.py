@@ -7,10 +7,10 @@ import nltk
 import re
 from nltk.corpus import stopwords  # liste de stopwords de NLTK
 
-nlp = spacy.load("en_core_web_sm")
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
+nlp = spacy.load("en_core_web_md")
+#nltk.download('punkt')
+#nltk.download('punkt_tab')
+#nltk.download('stopwords')
 
 # test creeDicoFreq
 document_list = [
@@ -22,6 +22,8 @@ test2 = ["There are horses next to this horse. It is sunny.", "Document 2 is her
 def open_split():
     with open("CISI/DATA/CISI_test.ALLnettoye") as f:
         documents = f.read()
+    documents = re.sub(r'\r\n|\r|\n', ' ', documents) #soit on met cette ligne soit on laisse \n dans la stop words liste
+    documents = re.sub(r'\s+', ' ', documents)
     pattern = r"\.I \d+"
     textes = re.split(pattern, documents) # liste des documents itérable de 1 à 1460
     return textes
@@ -33,7 +35,7 @@ def count_doc():
 
 # Step 1.1) : Tokenisation
 #creeDicoFreq : liste des docs dans lesquels apparaît le lemme, liste de tous les dicos des documents
-# on part du principe que le textes sont dans une liste de strings
+# on part du principe que les textes sont dans une liste de strings
 # appelée document_list issue de open_split()
 def creeDicoFreq(listeTexte):
     dico_liste = []  # liste pour stocker les dico pour chaque textes
@@ -72,7 +74,7 @@ stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", 
                    "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how",
                    "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
                    "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
-                   "now", " ", ".", ",", "!", "?", ";", "\n"]
+                   "now", " ", ".", ",", "!", "?", ";"]
 
 
 # Step 1.3) : TF IDF
@@ -152,6 +154,7 @@ def invertedFiles(vec_doc_liste):
         idoc += 1
     return dico
 
+
 # test invertedFiles
 vec_doc_liste_test = [[("chat", 1), ("Tomate", 0.5)], [("house", 0.9), ("car", 0.8), ("chat", 0.234)]]
 print("inverted-------------------------")
@@ -166,6 +169,9 @@ def main():
     textes = open_split()
     global liste_de_tous_les_dicos
     liste_de_tous_les_dicos = creeDicoFreq(textes)
+    print("Premier texte : ")
+    print(textes[1])
+    print("Premier dictionnaire : ")
     print(liste_de_tous_les_dicos[1])
 
     # Step 1.3) : TF IDF
@@ -173,8 +179,10 @@ def main():
     ''' Remarque de Léna
     Je ne suis pas sûre que la lemmatisation soit bien passée car par exemple pour le premier doc
     j'ai les mots "Editions" qui apparait une fois et "edition" qui apparait une fois aussi
-    alors que la lemmatisation aurait dû faire en sorte que "edition" apparaissent deux fois.
+    alors que la lemmatisation aurait dû faire en sorte que "edition" apparaisse deux fois.
     '''
+    print()
+    print("Nombre de documents contenant le lemme Editions :")
     print(test)
 
     # Step 1.4) :
