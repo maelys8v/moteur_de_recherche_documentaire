@@ -50,7 +50,7 @@ def creeDicoFreq(listeTexte):
         docu = nlp(doc)
         lemmes = []
         for w in docu:
-            lemmes.append(w.lemma_)
+            lemmes.append(w.lemma_.lower().__str__())
         for le in lemmes:
             # pour les dicos individuels
             if le in dico_liste[idoc].keys():
@@ -79,7 +79,7 @@ stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", 
                    "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how",
                    "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
                    "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
-                   "now", " ", ".", ",", "!", "?", ";"]
+                   "now", " ", ".", ",", "!", "?", ";", "'s", "-", "(", ")", "[", "]", ":", "\"", "'", "--"]
 
 
 # Step 1.3) : TF IDF
@@ -98,18 +98,22 @@ def nbLemmesDansDoc(doc):
 def nbDocContenantW(w):
     res = 0
     w = nlp(w)
+    #print(type(w)) # spacy.tokens.doc.Doc
     lemme = w[0].lemma_
+    #print(type(lemme)) # str
     for dico in liste_de_tous_les_dicos :
-        if lemme in dico:
+        if lemme in dico.keys().__str__():
+            # on veut du str et pas du spacy.tokens.doc.Doc
             res += 1
+
     return res
 
 def tfidf(word, doc):
     dicoDuDoc = liste_de_tous_les_dicos[doc]
-    return (dicoDuDoc[word]/nbLemmesDansDoc(doc)) * (math.log(nb_doc/nbDocContenantW(word)))
+    return (dicoDuDoc[word]/nbLemmesDansDoc(doc)) * (math.log10(nb_doc/nbDocContenantW(word)))
 
 # utilisation de tfidf pour tous les mots de tous les doc
-def weighting(ListeDeTousLesDicos):
+def weighting():
     '''
     {
         1:
@@ -127,13 +131,15 @@ def weighting(ListeDeTousLesDicos):
     '''
 
     poids = {}
-    compteur = 1
-    for texte in liste_de_tous_les_dicos.keys():
+    compteur = 1 # on identifie les textes par leur numéro (commence à 1 -> pb à regler plus tard)
+    for i in range (1, len(liste_de_tous_les_dicos)):
+        dico = liste_de_tous_les_dicos[i]
         poids[compteur] = {}
+        for mot in dico.keys():
+            #print(mot)
+            poids[compteur][mot] = tfidf(mot, compteur)
         compteur += 1
-        for mot in texte.split(" "):
-            poids[texte][mot] = tfidf(mot, texte)
-    return poids
+        return poids
 
 
 # Step 1.4) : Vectors
@@ -164,34 +170,35 @@ def invertedFiles(vec_doc_liste):
 
 
 # test invertedFiles
-vec_doc_liste_test = [[("chat", 1), ("Tomate", 0.5)], [("house", 0.9), ("car", 0.8), ("chat", 0.234)]]
-print("inverted-------------------------")
-print(invertedFiles(vec_doc_liste_test))
-print("---------------------------------")
+#vec_doc_liste_test = [[("chat", 1), ("Tomate", 0.5)], [("house", 0.9), ("car", 0.8), ("chat", 0.234)]]
+#print("inverted-------------------------")
+#print(invertedFiles(vec_doc_liste_test))
+#print("---------------------------------")
 # fin test invertedFiles
 
 
-def main():
 
+def main():
     # Step 1.1 and 1.2) : Tokenisation and choice of indexing terms
     textes = open_split()
-    global liste_de_tous_les_dicos
+    global liste_de_tous_les_dicos # avec les fréquences
+    global nb_doc
+    nb_doc = len(textes) # 11 sur CISI_test
     liste_de_tous_les_dicos = creeDicoFreq(textes)
-    print("Premier texte : ")
-    print(textes[1])
-    print("Premier dictionnaire : ")
-    print(liste_de_tous_les_dicos[1])
+    #print("Premier texte : ")
+    #print(textes[1])
+    #print("Premier dictionnaire : ")
+    #print(liste_de_tous_les_dicos[1])
 
     # Step 1.3) : TF IDF
-    test = nbDocContenantW("Editions")
-    '''Remarque de Léna
-    Je ne suis pas sûre que la lemmatisation soit bien passée car par exemple pour le premier doc
-    j'ai les mots "Editions" qui apparait une fois et "edition" qui apparait une fois aussi
-    alors que la lemmatisation aurait dû faire en sorte que "edition" apparaisse deux fois.
+    ''' Test de tf idf sur le lemme "need" dans le premier doc sur CISI_test
+    mon_doc = 1
+    mot = "need"
+    print("Nombre de documents contenant le lemme  ", mot, " : ", nbDocContenantW(mot)) # 5
+    print("Nombre de lemme dans mon_doc :", nbLemmesDansDoc(mon_doc)) # 51
+    print("tfidf de ", mot, " : ", tfidf(mot, mon_doc)) # 0.006 c'est bon
     '''
-    print()
-    print("Nombre de documents contenant le lemme Editions :")
-    print(test)
+    poids = weighting()
 
     # Step 1.4) :
 

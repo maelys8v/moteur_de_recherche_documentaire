@@ -6,7 +6,8 @@
 ## Améliorations
 - faire une stopword liste personnalisée aux textes qu'on a
 - première version : on prend les 10 mots les moins fréquents
-- faire en sorte que ça ne soit pas sensible à la casse (majuscule ou minuscule peu importe)
+- faire en sorte que ça ne soit pas sensible à la casse (majuscule ou minuscule peu importe): FAIT
+- 'united-states' devient 'united' et 'states', piste d'amélioration
 
 ## Git
 * accepter une modif : git fetch + git merge
@@ -16,7 +17,9 @@
 ### Lou
 ### Léna
 - TODO
-  - tester weighting suit aux tests de tfidf
+  - tester weighting suite aux tests de tfidf
+- redondances d'info dans nbDocContenantW(word) (mais c'est pas grave)
+- pourquoi y a detailed et pas detail dans la liste des dicos
 ### Jeanne
 ### Maëlys
 #### pour la step 1 part1 :
