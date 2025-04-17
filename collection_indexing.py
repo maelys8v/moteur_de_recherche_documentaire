@@ -85,7 +85,7 @@ stopsWords_list = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", 
 # Step 1.3) : TF IDF
 
 #nombre de lemmes total dans doc (genre 4 si on a 2 fois be et 2 fois love)
-def nbLemmesDansDoc(doc):
+def nbLemmesDansDoc(doc, liste_de_tous_les_dicos):
     res = 0
     dicoDuDoc = liste_de_tous_les_dicos[doc] #donne le dico du document
     for w in dicoDuDoc :
@@ -95,7 +95,7 @@ def nbLemmesDansDoc(doc):
 
 #nb de documents contenant w
 #modifs : lemmatisation de w avant de le chercher dans les dicos
-def nbDocContenantW(w):
+def nbDocContenantW(w,liste_de_tous_les_dicos):
     res = 0
     w = nlp(w)
     #print(type(w)) # spacy.tokens.doc.Doc
@@ -108,12 +108,14 @@ def nbDocContenantW(w):
 
     return res
 
-def tfidf(word, doc):
+def tfidf(word, doc, nb_doc, liste_de_tous_les_dicos):
     dicoDuDoc = liste_de_tous_les_dicos[doc]
-    return (dicoDuDoc[word]/nbLemmesDansDoc(doc)) * (math.log10(nb_doc/nbDocContenantW(word)))
+    if nbLemmesDansDoc(doc, liste_de_tous_les_dicos) == 0 or nbDocContenantW(word, liste_de_tous_les_dicos) == 0: # gère les erreurs de divisions par 0 pour l'instant
+        return 0.0
+    return (dicoDuDoc[word]/nbLemmesDansDoc(doc,liste_de_tous_les_dicos)) * (math.log10(nb_doc/nbDocContenantW(word,liste_de_tous_les_dicos)))
 
 # utilisation de tfidf pour tous les mots de tous les doc
-def weighting():
+def weighting(liste_de_tous_les_dicos,nb_doc):
     '''
     {
         1:
@@ -137,9 +139,9 @@ def weighting():
         poids[compteur] = {}
         for mot in dico.keys():
             #print(mot)
-            poids[compteur][mot] = tfidf(mot, compteur)
+            poids[compteur][mot] = tfidf(mot, compteur, nb_doc,liste_de_tous_les_dicos)
         compteur += 1
-        return poids
+    return poids
 
 
 # Step 1.4) : Vectors
@@ -151,6 +153,7 @@ def vector_representation(dico):
         for token in dico[dic_token]:
             sublist.append((token, dico[dic_token][token]))
         representation_vector.append(sublist)
+    return representation_vector
 
 # Step 1.5) : inverted files
 
@@ -168,6 +171,21 @@ def invertedFiles(vec_doc_liste):
         idoc += 1
     return dico
 
+# Step 2.1) : query indexing
+def open_split_query():
+    with open("CISI/DATA/CISI_dev.QRY") as f:
+        documents = f.read()
+    documents = re.sub(r'\r\n|\r|\n', ' ',
+                       documents)  # pour remplacer les retours à la ligne / retours chariot par un espace
+    documents = re.sub(r'\s+', ' ', documents)  # pour enlever les espaces consécutifs
+    pattern = r"\.I \d+"
+    raw_queries = re.split(pattern, documents)  # liste des requêtes avec .T,.A et .B qu'il faut enlever
+    queries = [] # liste des requêtes avec le champ W. seulement
+    for q in raw_queries:
+        match = re.search(r".W\s+(.*?)(?:\s+\.[A-Z]\s|$)",q,re.DOTALL)
+        if match:
+            queries.append(match.group(1).strip())
+    return queries
 
 # test invertedFiles
 #vec_doc_liste_test = [[("chat", 1), ("Tomate", 0.5)], [("house", 0.9), ("car", 0.8), ("chat", 0.234)]]
@@ -181,10 +199,10 @@ def invertedFiles(vec_doc_liste):
 def main():
     # Step 1.1 and 1.2) : Tokenisation and choice of indexing terms
     textes = open_split()
-    global liste_de_tous_les_dicos # avec les fréquences
-    global nb_doc
-    nb_doc = len(textes) # 11 sur CISI_test
-    liste_de_tous_les_dicos = creeDicoFreq(textes)
+    # global liste_de_tous_les_dicos # avec les fréquences
+    # global nb_doc
+    nb_docs = len(textes) # 11 sur CISI_test
+    liste_tous_les_dicos = creeDicoFreq(textes)
     #print("Premier texte : ")
     #print(textes[1])
     #print("Premier dictionnaire : ")
@@ -198,10 +216,20 @@ def main():
     print("Nombre de lemme dans mon_doc :", nbLemmesDansDoc(mon_doc)) # 51
     print("tfidf de ", mot, " : ", tfidf(mot, mon_doc)) # 0.006 c'est bon
     '''
-    poids = weighting()
+    poids = weighting(liste_tous_les_dicos,nb_docs)
 
-    # Step 1.4) :
+    # Step 1.4) : production of a representation vector for each document
+    vector = vector_representation(poids)
 
+    # Step 1.5) : production of inverted files for our system
+    inverted = invertedFiles(vector)
+
+    # Step 2.1) : indexing queries
+    queries = open_split_query()
+    nb_query = len(queries)
+    liste_de_tous_les_dicos_query = creeDicoFreq(queries)
+    poids_query = weighting(liste_de_tous_les_dicos_query, nb_query)
+    vector_query = vector_representation(poids_query)
 
 
 
