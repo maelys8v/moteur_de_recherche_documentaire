@@ -311,12 +311,12 @@ def similarity_measurement(dico_w_lemmesParTexte, l_w_qry, nbDoc):
     wQuery = numpy.array(poidsQuery)
     for i in range(nbDoc):
         wDoc = numpy.array(poidsDoc[i])
-        print(i)
-        print(poidsDoc[i])
-        print(wDoc)
+        #print(i)
+        #print(poidsDoc[i])
+        #print(wDoc)
         similarity.append(-1 * distance.euclidean(wDoc, wQuery))
-    print("simiilarity ----------------------------------------------------------")
-    print(similarity)
+    #print("simiilarity ----------------------------------------------------------")
+    #print(similarity)
     #  tri des similarités pour trouver les documents les plus pertinents
     for i in range(nbDoc):
         maxi = max(similarity)
@@ -373,8 +373,8 @@ def main():
     #print(vector_query)  # liste de listes avec pour chaque query, les poids
 
     testSim = similarity_measurement(inverted, vector_query[0], nb_docs)
-    print("- - - testSim    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - - - - - - - - - - - - ")
-    print(testSim)
+    #print("- - - testSim    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - - - - - - - - - - - - ")
+    #print(testSim)
 
 
 if __name__ == "__main__":
