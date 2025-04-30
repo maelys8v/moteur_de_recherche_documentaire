@@ -33,3 +33,11 @@
       5. faire le stemming avec nltk
       4. faire une liste de dicos avec un dico par texte
 4. fin
+#### step 2
+##### build the search engine
+1. query indexing : to index the queries, use the same methodology and the same weighting
+schemes as for documents.
+2. implementation of a search engine to answer the queries : a similarity measure between the
+indexing vectors of the queries and the documents has to be chosen and implemented. **The
+expected output is a ranked list of documents calculated by the system in response to a given
+query.**
