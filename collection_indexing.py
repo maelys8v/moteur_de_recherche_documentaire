@@ -1,5 +1,7 @@
 import spacy.cli
+from scipy.spatial import distance
 import math
+import numpy
 
 from nltk import word_tokenize
 
@@ -46,7 +48,7 @@ compte le nombre de documents
 
 def count_doc():
     # pas très optim
-    len(open_split())
+    return len(open_split())
 
 
 # Step 1.1) : Tokenisation
@@ -58,25 +60,25 @@ appelée document_list issue de open_split()
 
 
 def creeDicoFreq(listeTexte):
-    dico_liste = []  # liste pour stocker les dico pour chaque textes
-    idoc = 0
-    for doc in listeTexte:
+    dico_liste = []  # liste pour stocker les dicos pour chaque textes
+    idoc = 0  # pour savoir quel doc on est en train de traiter
+    for doc in listeTexte:  # parcourir les différents docs
         dico_liste.append({})
-        docu = nlp(doc)
-        lemmes = []
-        for w in docu:
+        docu = nlp(doc)  # lemmatisation du doc
+        lemmes = []  # liste pour stocker tous les lemmes présents dans docu
+        for w in docu:  # remplissage de la liste lemmes
             lemmes.append(w.lemma_.lower().__str__())
-        for le in lemmes:
+        for le in lemmes:  # comptage des lemmes
             # pour les dicos individuels
             if le in dico_liste[idoc].keys():
                 dico_liste[idoc][le] += 1
             else:
                 dico_liste[idoc][le] = 1
-        idoc += 1
+        idoc += 1  # on passe au doc suivant
     dico_liste = [{w: d[w] for w in d if w not in stopsWords_list} for d in
                   dico_liste]  # enlève les stopwords dans chaque dico
     dico_liste = [{w: d[w] for w in d if d[w] < 5} for d in
-                  dico_liste]  # enlève chaque token de freq>5 dans chaque dico
+                  dico_liste]  # enlève chaque token de freq>=5 dans chaque dico
     return dico_liste
 
 
@@ -150,7 +152,7 @@ application de tfidf sur le document doc avec le mot word
 
 
 def tfidf(word, doc, nb_doc, liste_de_tous_les_dicos):
-    dicoDuDoc = liste_de_tous_les_dicos[doc]
+    dicoDuDoc = liste_de_tous_les_dicos[doc]  # dictionnaire correspondant au document doc
 
     return (dicoDuDoc[word] / nbLemmesDansDoc(doc, liste_de_tous_les_dicos)) * (
         math.log10(nb_doc / nbDocContenantW(word, liste_de_tous_les_dicos)))
@@ -191,7 +193,8 @@ def weighting(liste_de_tous_les_dicos, nb_doc):
 
 # Step 1.4) : Vectors
 """
-rend un Liste de listes de Tuple(Terme, Poids) (pour chaque dico on a une liste des tokens avec leur poids associé)
+rend une Liste de listes de Tuple(Terme, Poids) (pour chaque dico on a une liste des tokens avec leur poids associé)
+ex : [[('major', 0.01296918750639406), ('deficiency', 0.02461868757866104), ('traditional', 0.0392030........
 """
 
 
@@ -272,6 +275,59 @@ def output_file(ranked_documents):
 
 
 
+"""
+pour comparer les vecteurs des queries et des textes > mettre les rst dans un dico > dans une liste triée
+prend en paramètres : 
+- le dictionnaire sorti de inverted files dico_w_lemmesParTexte
+- une liste de Tuples(Terme, Poids) correspondant à la query l_w_qry
+- nbDoc : nb de documents à comparer avec la query
+- nbRst : nbr de documents à donner en sortie
+
+renvoit les docs pertinents avec la similarité correspondante sous forme de liste de tuples
+"""
+
+
+def similarity_measurement(dico_w_lemmesParTexte, l_w_qry, nbDoc, nbRst):
+    similarity = []  # liste qui contient la similarité entre la query et le texte i
+    poidsDoc = []  # pour chaque texte i, un vecteur avec les poids des mots de la query
+    poidsQuery = []  # vecteur avec les poids des mots de la query
+    nbMots = 0  # combien de mots on a stocké
+    rst = []  # liste qui contiendra le résultat
+
+    #  initialisation de poidsDoc avec les listes qui contiendront les vecteurs
+    for i in range(nbDoc):
+        poidsDoc.append([])
+    #  remplissage des listes de poidsDoc et du vecteur poidsQuery
+    for tupleW in l_w_qry:
+        if tupleW[0] in dico_w_lemmesParTexte.keys():
+            poidsQuery.append(tupleW[1])
+            poids = dico_w_lemmesParTexte[tupleW[0]]
+            for doublet in poids:
+                poidsDoc[doublet[0]].append(doublet[1])  # ajouter dans le vecteur du doc, le poids correspondant
+            nbMots += 1
+    #  calcul de la similarité
+    wQuery = numpy.array(poidsQuery)
+    for i in range(nbDoc):
+        wDoc = numpy.array(poidsDoc[i])
+        similarity.append(-1 * distance.euclidean(wDoc, wQuery))
+    #  tri des similarités pour trouver les documents les plus pertinents
+    for i in range(nbRst):
+        maxi = max(similarity)
+        imax = similarity.index(maxi)
+        rst.append((imax, maxi))
+        similarity[imax] = -1 * math.inf
+    return rst
+
+
+# rst de inverted files docs : >>> {'chat': [(0, 1), (1, 0.234)], 'Tomate': [(0, 0.5)], 'house': [(1, 0.9)], 'car': [(1, 0.8)]}
+# rst de :    [[('major', 0.01296918750639406), ('deficiency', 0.02461868757866104),
+# queries = open_split_query()
+#    nb_query = len(queries)
+#    liste_de_tous_les_dicos_query = creeDicoFreq(queries)
+#    poids_query = weighting(liste_de_tous_les_dicos_query, nb_query)
+#    vector_query = vector_representation(poids_query)
+
+
 def main():
     # Step 1.1 and 1.2) : Tokenisation and choice of indexing terms
     textes = open_split()
@@ -306,8 +362,12 @@ def main():
     liste_de_tous_les_dicos_query = creeDicoFreq(queries)
     poids_query = weighting(liste_de_tous_les_dicos_query, nb_query)
     vector_query = vector_representation(poids_query)
-    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
-    print(vector_query)
+    print("- - - vector_query - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
+    print(vector_query)  # liste de listes avec pour chaque query, les poids
+
+    testSim = similarity_measurement(inverted, vector_query, nb_docs, 5)
+    print("- - - testSim    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - - - - - - - - - - - - ")
+    print(testSim)
 
 
 if __name__ == "__main__":
