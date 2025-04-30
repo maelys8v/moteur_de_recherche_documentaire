@@ -262,6 +262,15 @@ def open_split_query():
             queries.append(match.group(1).strip())
     return queries
 
+# Step 3) producing the .REL file for evaluation
+# we have a ranked list of tuple(document, similarity) in response to a given query (in a list with index 0 corresponding to the first query)
+def output_file(ranked_documents):
+    f=open("test_eval.REL","w+")
+    for i in range(len(ranked_documents)):
+        for j in range(len(ranked_documents[i])):
+            f.write(str(i+1)+" "+str(ranked_documents[i][j][0])+" "+str(ranked_documents[i][j][1])+"\n")
+
+
 
 def main():
     # Step 1.1 and 1.2) : Tokenisation and choice of indexing terms
