@@ -227,8 +227,8 @@ def invertedFiles(vec_doc_liste):
     idoc = 0
     for l_doc in vec_doc_liste:
         for doublet in l_doc:
-            print(doublet)
-            print(doublet[0])
+            #print(doublet)
+            #print(doublet[0])
             if doublet[0] in dico.keys():
                 dico[doublet[0]].append((idoc, doublet[1]))
             else:
@@ -281,13 +281,12 @@ prend en paramètres :
 - le dictionnaire sorti de inverted files dico_w_lemmesParTexte
 - une liste de Tuples(Terme, Poids) correspondant à la query l_w_qry
 - nbDoc : nb de documents à comparer avec la query
-- nbRst : nbr de documents à donner en sortie
 
 renvoit les docs pertinents avec la similarité correspondante sous forme de liste de tuples
 """
 
 
-def similarity_measurement(dico_w_lemmesParTexte, l_w_qry, nbDoc, nbRst):
+def similarity_measurement(dico_w_lemmesParTexte, l_w_qry, nbDoc):
     similarity = []  # liste qui contient la similarité entre la query et le texte i
     poidsDoc = []  # pour chaque texte i, un vecteur avec les poids des mots de la query
     poidsQuery = []  # vecteur avec les poids des mots de la query
@@ -302,16 +301,24 @@ def similarity_measurement(dico_w_lemmesParTexte, l_w_qry, nbDoc, nbRst):
         if tupleW[0] in dico_w_lemmesParTexte.keys():
             poidsQuery.append(tupleW[1])
             poids = dico_w_lemmesParTexte[tupleW[0]]
+            for j in range(nbDoc):
+                poidsDoc[j].append(1)
             for doublet in poids:
-                poidsDoc[doublet[0]].append(doublet[1])  # ajouter dans le vecteur du doc, le poids correspondant
+                poidsDoc[doublet[0]][-1] = doublet[1]  # ajouter dans le vecteur du doc, le poids correspondant
             nbMots += 1
+
     #  calcul de la similarité
     wQuery = numpy.array(poidsQuery)
     for i in range(nbDoc):
         wDoc = numpy.array(poidsDoc[i])
+        print(i)
+        print(poidsDoc[i])
+        print(wDoc)
         similarity.append(-1 * distance.euclidean(wDoc, wQuery))
+    print("simiilarity ----------------------------------------------------------")
+    print(similarity)
     #  tri des similarités pour trouver les documents les plus pertinents
-    for i in range(nbRst):
+    for i in range(nbDoc):
         maxi = max(similarity)
         imax = similarity.index(maxi)
         rst.append((imax, maxi))
@@ -362,10 +369,10 @@ def main():
     liste_de_tous_les_dicos_query = creeDicoFreq(queries)
     poids_query = weighting(liste_de_tous_les_dicos_query, nb_query)
     vector_query = vector_representation(poids_query)
-    print("- - - vector_query - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
-    print(vector_query)  # liste de listes avec pour chaque query, les poids
+    #print("- - - vector_query - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
+    #print(vector_query)  # liste de listes avec pour chaque query, les poids
 
-    testSim = similarity_measurement(inverted, vector_query, nb_docs, 5)
+    testSim = similarity_measurement(inverted, vector_query[0], nb_docs)
     print("- - - testSim    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - - - - - - - - - - - - ")
     print(testSim)
 
