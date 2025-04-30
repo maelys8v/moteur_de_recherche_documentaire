@@ -132,12 +132,12 @@ modifs : lemmatisation de w avant de le chercher dans les dicos
 
 def nbDocContenantW(w, liste_de_tous_les_dicos):
     res = 0
-    w = nlp(w)
+    #w = nlp(w)
     # print(type(w)) # spacy.tokens.doc.Doc
-    lemme = w[0].lemma_
+    #lemme = w.lemma_
     # print(type(lemme)) # str
     for dico in liste_de_tous_les_dicos:
-        if lemme in dico.keys().__str__():
+        if w in dico.keys().__str__():
             # on veut du str et pas du spacy.tokens.doc.Doc
             res += 1
 
@@ -151,9 +151,7 @@ application de tfidf sur le document doc avec le mot word
 
 def tfidf(word, doc, nb_doc, liste_de_tous_les_dicos):
     dicoDuDoc = liste_de_tous_les_dicos[doc]
-    if nbLemmesDansDoc(doc, liste_de_tous_les_dicos) == 0 or nbDocContenantW(word,
-                                                                             liste_de_tous_les_dicos) == 0:  # gère les erreurs de divisions par 0 pour l'instant
-        return 0.0
+
     return (dicoDuDoc[word] / nbLemmesDansDoc(doc, liste_de_tous_les_dicos)) * (
         math.log10(nb_doc / nbDocContenantW(word, liste_de_tous_les_dicos)))
 
