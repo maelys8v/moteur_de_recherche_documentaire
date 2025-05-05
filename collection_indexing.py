@@ -379,7 +379,7 @@ def similarity_measurement(dico_w_lemmesParTexte, l_w_qry, nbDoc):
     # print("simiilarity ----------------------------------------------------------")
     # print(similarity)
     #  tri des similarités pour trouver les documents les plus pertinents
-    for i in range(nbDoc):
+    for i in range(nbDoc//2):
         maxi = max(similarity)
         imax = similarity.index(maxi)
         rst.append((imax, maxi))
