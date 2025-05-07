@@ -17,7 +17,7 @@ nlp = spacy.load("en_core_web_md")
 
 def open_split():
     """Ouverture du fichier et séparation en liste de textes"""
-    with open("CISI/DATA/CISI.ALLnettoye") as f:  # "CISI/DATA/CISI_test.ALLnettoye"
+    with open("CISI/DATA/CISI_test2.ALLnettoye") as f:  # "CISI/DATA/CISI_test.ALLnettoye"
         documents = f.read()
     documents = re.sub(r'\r\n|\r|\n', ' ',
                        documents)  # pour remplacer les retours à la ligne / retours chariot par un espace
