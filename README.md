@@ -1,7 +1,7 @@
 # taleo
 
 ## Remarques
-/!\ Un fichier CISI_test.ALLnettoye a été crée avec juste 10 documents pour tester plus rapidement sur moins de données pendant la phase de développement.
+/!\ Un fichier CISI_test2.ALLnettoye a été crée avec juste 10 documents pour tester plus rapidement sur moins de données pendant la phase de développement.
 
 ## Améliorations
 - faire une stopword liste personnalisée aux textes qu'on a
