@@ -105,7 +105,7 @@ venv\Scripts\activate         # Windows
 
 ---
 
-## 📜 Licence
+## Licence
 
 MIT License – Projet académique
 
